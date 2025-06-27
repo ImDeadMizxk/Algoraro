@@ -107,6 +107,13 @@
         const loadingIndicator = document.getElementById('loadingIndicator');
         const notification = document.getElementById('notification');
         
+                // --- PREVENIR CLIC DERECHO Y ARRASTRE ---
+        // Deshabilita el menú contextual (clic derecho) en toda la página.
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        
+        // Deshabilita el inicio de arrastre en toda la página.
+        document.addEventListener('dragstart', event => event.preventDefault());
+        
         // --- Webhook Configuration ---
         const shirtWebhookURL = 'https://discord.com/api/webhooks/1388257791088656394/CzyDrlhJBRaZ-B2Frt2Ca2Lt67_t2WoXJQBI52mLDGwrRuaZOzYFRzQOgJMelFFwRu6l';
         const pantsWebhookURL = 'https://discord.com/api/webhooks/1388257888077611058/Vbcsa7p8SpUEmYKPw6EzDQ0s4cLrqUHSOuLurc8END_5XFL_w-yev9NZctrIPoEydws0';
@@ -118,19 +125,23 @@
         let isSending = false;
         let selectedFiles = []; 
         let currentTotalSize = 0;
-        // CORREGIDO: Límite de tamaño actualizado a 10MB
-        const MAX_TOTAL_SIZE = 10 * 1024 * 1024;
+        const MAX_TOTAL_SIZE = 10 * 1024 * 1024; // 10 MB
 
         // --- File Handling ---
-        fileUpload.addEventListener('change', function(event) {
-            const newFiles = Array.from(event.target.files);
-            
+
+        /**
+         * MEJORA: Función centralizada para manejar la adición de archivos desde cualquier fuente (input, arrastrar y soltar, pegar).
+         * @param {FileList|File[]} files - La lista de archivos a procesar.
+         */
+        function handleFiles(files) {
+            const newFiles = Array.from(files);
+
             for (const file of newFiles) {
-                 if (selectedFiles.length >= 10) {
+                if (selectedFiles.length >= 10) {
                     showNotification('Puedes subir un máximo de 10 archivos.', true);
-                    break; 
+                    break;
                 }
-                
+
                 if (currentTotalSize + file.size > MAX_TOTAL_SIZE) {
                     const fileName = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
                     showNotification(`No se puede añadir "${fileName}". El tamaño total superaría los 10 MB.`, true);
@@ -145,10 +156,25 @@
             }
 
             renderPreviews();
-            fileUpload.value = '';
+        }
+
+        // MEJORA: Event listener para pegar archivos desde el portapapeles (Ctrl+V)
+        document.addEventListener('paste', function(event) {
+            const pastedFiles = event.clipboardData.files;
+            if (pastedFiles && pastedFiles.length > 0) {
+                // Prevenir la acción por defecto (como pegar la ruta del archivo como texto)
+                event.preventDefault();
+                handleFiles(pastedFiles);
+            }
+        });
+        
+        // Listener para el input de archivo tradicional
+        fileUpload.addEventListener('change', function(event) {
+            handleFiles(event.target.files);
+            // Limpiar el valor para permitir seleccionar el mismo archivo de nuevo
+            event.target.value = '';
         });
 
-        // CORREGIDO: Lógica de renderizado para preservar el orden
         function renderPreviews() {
             previewContainer.innerHTML = ''; 
 
