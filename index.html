@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enviar Ropa a Discord</title>
-    <!-- Incluyendo Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Incluyendo la fuente Inter de Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,6 +21,12 @@
         #imageUpload {
             display: none;
         }
+        /* Prevenir la selección y el arrastre de imágenes */
+        img {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ */
+            user-select: none; /* Sintaxis estándar */
+        }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen py-8 px-4">
@@ -30,23 +34,22 @@
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
             <div class="flex flex-col items-center text-center mb-8">
-                <img src="https://i.imgur.com/y5WqBp1.jpeg" alt="Logo del Bot" class="w-20 h-20 rounded-full mb-4 shadow-md">
+                <!-- Imagen del bot con object-cover para evitar distorsión -->
+                <img src="https://i.imgur.com/y5WqBp1.jpeg" alt="Logo del Bot" class="w-20 h-20 rounded-full mb-4 shadow-md object-cover">
                 <h1 class="text-3xl font-bold text-gray-800">Clothing Bot</h1>
                 <p class="text-gray-500">Envía prendas a tu canal de Discord.</p>
             </div>
             
-            <!-- Área para el mensaje -->
             <div class="mb-4">
                 <label for="message" class="sr-only">Mensaje</label>
                 <textarea 
                     id="message" 
                     rows="4" 
                     class="w-full p-3 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-800 focus:outline-none text-gray-700 placeholder-gray-400 resize-none transition-colors"
-                    placeholder="Describe la prenda, añade un código, etc."
+                    placeholder="Describe la prenda o pega un enlace de Roblox..."
                 ></textarea>
             </div>
 
-            <!-- Área para subir imagen -->
             <div class="mb-4">
                 <label for="imageUpload" class="w-full cursor-pointer bg-white border-2 border-dashed border-gray-300 hover:border-gray-400 hover:bg-gray-50 text-gray-500 font-semibold py-4 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-800 transition-colors duration-300 flex flex-col items-center justify-center text-center">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>
@@ -55,13 +58,11 @@
                 <input type="file" id="imageUpload" accept="image/*">
             </div>
 
-            <!-- Vista previa de la imagen -->
             <div id="imagePreviewContainer" class="mb-4 hidden relative opacity-0 transform scale-95">
-                <img id="imagePreview" src="#" alt="Vista previa de la imagen" class="max-h-64 w-full object-contain rounded-lg border border-gray-200">
+                <img id="imagePreview" src="#" alt="" class="max-h-64 w-full object-contain rounded-lg border border-gray-200">
                 <button id="removeImageButton" title="Quitar imagen" class="absolute top-2 right-2 bg-black/50 text-white rounded-full h-7 w-7 flex items-center justify-center font-bold hover:bg-black/75 transition-colors">&times;</button>
             </div>
             
-            <!-- Botones de envío -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <button id="sendShirtButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center shadow-sm">
                     <span class="button-text">Enviar como Camisa</span>
@@ -71,8 +72,7 @@
                 </button>
             </div>
 
-             <!-- Indicador de carga global -->
-            <div id="loadingIndicator" class="hidden mt-6 flex items-center justify-center text-gray-500">
+             <div id="loadingIndicator" class="hidden mt-6 flex items-center justify-center text-gray-500">
                 <svg class="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -81,7 +81,6 @@
             </div>
         </div>
         
-        <!-- Contenedor para notificaciones de estado -->
         <div id="notification" class="fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2"></div>
     </div>
 
@@ -98,11 +97,18 @@
         const notification = document.getElementById('notification');
         
         // --- Webhook Configuration ---
-        const webhookURL = 'https://discord.com/api/webhooks/1388243649837666569/H25jj5XHMA_zcP7KbmPW3R1pImYJICakNVM4XI9wpiW63hMIoX4MV2_E51Kvb-U5ckrh';
+        const shirtWebhookURL = 'https://discord.com/api/webhooks/1388257791088656394/CzyDrlhJBRaZ-B2Frt2Ca2Lt67_t2WoXJQBI52mLDGwrRuaZOzYFRzQOgJMelFFwRu6l';
+        const pantsWebhookURL = 'https://discord.com/api/webhooks/1388257888077611058/Vbcsa7p8SpUEmYKPw6EzDQ0s4cLrqUHSOuLurc8END_5XFL_w-yev9NZctrIPoEydws0';
         const botUsername = 'Clothing Bot';
         const botAvatarUrl = 'https://i.imgur.com/y5WqBp1.jpeg';
 
         let isSending = false;
+
+        // --- Prevenir Interacción con Imágenes ---
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('contextmenu', e => e.preventDefault());
+            img.setAttribute('draggable', 'false');
+        });
 
         // --- Image Handling ---
         imageUpload.addEventListener('change', function(event) {
@@ -121,7 +127,6 @@
             imageUpload.value = ''; // Clear the file input
             imagePreview.src = '#';
             imagePreviewContainer.classList.add('opacity-0', 'scale-95');
-            // Wait for animation to finish before hiding
             setTimeout(() => {
                 imagePreviewContainer.classList.add('hidden');
             }, 300);
@@ -134,19 +139,46 @@
         async function sendMessage(tag) {
             if (isSending) return;
 
-            const message = messageTextarea.value.trim();
+            const originalMessage = messageTextarea.value.trim();
             const file = imageUpload.files[0];
 
-            if (!message && !file) {
+            let processedMessage = originalMessage;
+            const robloxUrlRegex = /(https?:\/\/www\.roblox\.com\/catalog\/\d+)/;
+            const match = originalMessage.match(robloxUrlRegex);
+
+            if (match && match[0]) {
+                processedMessage = match[0]; 
+            }
+
+            if (!processedMessage && !file) {
                 showNotification('Debes escribir un mensaje o subir una imagen.', true);
                 return;
             }
 
             setLoading(true);
+            
+            // Determinar qué webhook usar
+            const targetWebhookURL = tag === 'CAMISA' ? shirtWebhookURL : pantsWebhookURL;
+            
+            // Aplicar formato Markdown a las etiquetas
+            const finalTag = tag === 'CAMISA' ? '> ## **Shirt** [ 🧥 ]' : '> ## **Pants** [ 👖 ]';
+            
+            let messagePart = '';
+            if (processedMessage) {
+                messagePart = ` ${processedMessage}`;
+            }
+
+            let finalContent = `${finalTag}${messagePart}`;
+
+            // Añadir un espacio sobre la imagen si se adjunta una.
+            // Se añade un salto de línea y un carácter de espacio de ancho cero para forzar el espaciado.
+            if (file) {
+                finalContent += "\n\u200b";
+            }
 
             const formData = new FormData();
             const payload = {
-                content: `[ ${tag} ] ${message}`,
+                content: finalContent,
                 username: botUsername,
                 avatar_url: botAvatarUrl
             };
@@ -158,7 +190,7 @@
             }
 
             try {
-                const response = await fetch(webhookURL, {
+                const response = await fetch(targetWebhookURL, {
                     method: 'POST',
                     body: formData,
                 });
