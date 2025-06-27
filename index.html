@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Enviar Ropa a Discord</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="https://i.imgur.com/HUhIujV.jpeg" type="image/jpeg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,8 +35,8 @@
     <div class="w-full max-w-lg mx-auto">
         <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8">
             <div class="flex flex-col items-center text-center mb-8">
-                <!-- Imagen del bot con object-cover para evitar distorsión -->
-                <img src="https://i.imgur.com/y5WqBp1.jpeg" alt="Logo del Bot" class="w-20 h-20 rounded-full mb-4 shadow-md object-cover">
+                <!-- CORREGIDO: La imagen principal ahora es el botón "Subido" -->
+                <img id="sendUploadButton" src="https://i.imgur.com/y5WqBp1.jpeg" alt="Enviar como Subido" title="Enviar como Subido" class="w-20 h-20 rounded-full mb-4 shadow-md object-cover cursor-pointer hover:scale-110 transition-transform duration-300">
                 <h1 class="text-3xl font-bold text-gray-800">Clothing Bot</h1>
                 <p class="text-gray-500">Envía prendas a tu canal de Discord.</p>
             </div>
@@ -63,13 +64,16 @@
                 <button id="removeImageButton" title="Quitar imagen" class="absolute top-2 right-2 bg-black/50 text-white rounded-full h-7 w-7 flex items-center justify-center font-bold hover:bg-black/75 transition-colors">&times;</button>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <button id="sendShirtButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center shadow-sm">
-                    <span class="button-text">Enviar como Camisa</span>
-                </button>
-                <button id="sendPantsButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center shadow-sm">
-                    <span class="button-text">Enviar como Pantalón</span>
-                </button>
+            <!-- Botones de envío -->
+            <div class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button id="sendShirtButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center shadow-sm">
+                        <span class="button-text">Enviar como Camisa</span>
+                    </button>
+                    <button id="sendPantsButton" class="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center shadow-sm">
+                        <span class="button-text">Enviar como Pantalón</span>
+                    </button>
+                </div>
             </div>
 
              <div id="loadingIndicator" class="hidden mt-6 flex items-center justify-center text-gray-500">
@@ -93,12 +97,14 @@
         const removeImageButton = document.getElementById('removeImageButton');
         const sendShirtButton = document.getElementById('sendShirtButton');
         const sendPantsButton = document.getElementById('sendPantsButton');
+        const sendUploadButton = document.getElementById('sendUploadButton'); // Ahora es la imagen principal
         const loadingIndicator = document.getElementById('loadingIndicator');
         const notification = document.getElementById('notification');
         
         // --- Webhook Configuration ---
         const shirtWebhookURL = 'https://discord.com/api/webhooks/1388257791088656394/CzyDrlhJBRaZ-B2Frt2Ca2Lt67_t2WoXJQBI52mLDGwrRuaZOzYFRzQOgJMelFFwRu6l';
         const pantsWebhookURL = 'https://discord.com/api/webhooks/1388257888077611058/Vbcsa7p8SpUEmYKPw6EzDQ0s4cLrqUHSOuLurc8END_5XFL_w-yev9NZctrIPoEydws0';
+        const uploadWebhookURL = 'https://discord.com/api/webhooks/1388243649837666569/H25jj5XHMA_zcP7KbmPW3R1pImYJICakNVM4XI9wpiW63hMIoX4MV2_E51Kvb-U5ckrh'; // Nuevo webhook
         const botUsername = 'Clothing Bot';
         const botAvatarUrl = 'https://i.imgur.com/y5WqBp1.jpeg';
 
@@ -106,8 +112,14 @@
 
         // --- Prevenir Interacción con Imágenes ---
         document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('contextmenu', e => e.preventDefault());
-            img.setAttribute('draggable', 'false');
+            // Permitir arrastrar la imagen de vista previa, pero no las demás
+            if (img.id !== 'imagePreview') {
+                img.setAttribute('draggable', 'false');
+            }
+            // Prevenir el menú contextual solo en las imágenes que no son de vista previa
+            if (img.id !== 'imagePreview') {
+                img.addEventListener('contextmenu', e => e.preventDefault());
+            }
         });
 
         // --- Image Handling ---
@@ -135,6 +147,7 @@
         // --- Sending Logic ---
         sendShirtButton.addEventListener('click', () => sendMessage('CAMISA'));
         sendPantsButton.addEventListener('click', () => sendMessage('PANTALON'));
+        sendUploadButton.addEventListener('click', () => sendMessage('SUBIDO')); 
 
         async function sendMessage(tag) {
             if (isSending) return;
@@ -147,7 +160,7 @@
             const match = originalMessage.match(robloxUrlRegex);
 
             if (match && match[0]) {
-                processedMessage = match[0]; 
+                processedMessage = `<${match[0]}>`; 
             }
 
             if (!processedMessage && !file) {
@@ -157,11 +170,20 @@
 
             setLoading(true);
             
-            // Determinar qué webhook usar
-            const targetWebhookURL = tag === 'CAMISA' ? shirtWebhookURL : pantsWebhookURL;
-            
-            // Aplicar formato Markdown a las etiquetas
-            const finalTag = tag === 'CAMISA' ? '> ## **Shirt** [ 🧥 ]' : '> ## **Pants** [ 👖 ]';
+            // Determinar qué webhook y etiqueta usar
+            let targetWebhookURL;
+            let finalTag;
+
+            if (tag === 'CAMISA') {
+                targetWebhookURL = shirtWebhookURL;
+                finalTag = '> ## **Shirt** [ 🥼 ]';
+            } else if (tag === 'PANTALON') {
+                targetWebhookURL = pantsWebhookURL;
+                finalTag = '> ## **Pants** [ 👖 ]';
+            } else if (tag === 'SUBIDO') {
+                targetWebhookURL = uploadWebhookURL;
+                finalTag = '> ## **Subido** [ 📤 ]';
+            }
             
             let messagePart = '';
             if (processedMessage) {
@@ -170,8 +192,6 @@
 
             let finalContent = `${finalTag}${messagePart}`;
 
-            // Añadir un espacio sobre la imagen si se adjunta una.
-            // Se añade un salto de línea y un carácter de espacio de ancho cero para forzar el espaciado.
             if (file) {
                 finalContent += "\n\u200b";
             }
@@ -216,10 +236,16 @@
         function setLoading(isLoading) {
             isSending = isLoading;
             loadingIndicator.classList.toggle('hidden', !isLoading);
+            
+            // Deshabilitar botones y aplicar estilo de opacidad
             sendShirtButton.disabled = isLoading;
             sendPantsButton.disabled = isLoading;
-            sendShirtButton.classList.toggle('opacity-50', isLoading);
-            sendPantsButton.classList.toggle('opacity-50', isLoading);
+            
+            // Aplicar estilo visual a todos los botones, incluyendo la imagen
+            [sendShirtButton, sendPantsButton, sendUploadButton].forEach(btn => {
+                btn.classList.toggle('opacity-50', isLoading);
+                btn.classList.toggle('pointer-events-none', isLoading);
+            });
         }
 
         function showNotification(message, isError = false) {
