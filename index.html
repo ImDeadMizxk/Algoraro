@@ -17,7 +17,7 @@
             background-color: #111827; /* Fondo oscuro base */
         }
 
-        /* --- MEJORA: Ocultar la barra de scroll pero mantener funcionalidad --- */
+        /* --- Ocultar la barra de scroll pero mantener funcionalidad --- */
         /* Para Firefox */
         html {
             scrollbar-width: none;
@@ -32,7 +32,6 @@
         body::-webkit-scrollbar {
             display: none;
         }
-        /* --- FIN DE LA MEJORA --- */
         
         /* Contenedor para la animación de fondo */
         #bg-canvas {
@@ -81,8 +80,8 @@
     <!-- Canvas para la animación de fondo -->
     <canvas id="bg-canvas"></canvas>
 
-    <!-- Este contenedor ahora permitirá el scroll si su contenido crece -->
-    <div class="relative flex items-center justify-center min-h-screen p-4">
+    <!-- MEJORA: Se añade flex-col para apilar el panel y el pie de página -->
+    <div class="relative flex flex-col items-center justify-center min-h-screen p-4">
         <div class="w-full max-w-lg mx-auto my-2">
             <div class="glassmorphism rounded-2xl shadow-2xl p-6 sm:p-8">
                 <div class="flex flex-col items-center text-center mb-8">
@@ -121,7 +120,6 @@
                 <div class="space-y-4">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <button id="sendShirtButton" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-cyan-400/40 transform hover:-translate-y-1">
-                            <!-- MEJORA: Icono de camisa actualizado -->
                             <svg class="mr-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M9 3H15L16 4L20 5V9L18 10H6L4 9V5L8 4L9 3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M6 10L7 21H17L18 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -129,7 +127,6 @@
                             <span class="button-text">Enviar Camisa</span>
                         </button>
                         <button id="sendPantsButton" class="w-full bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 flex items-center justify-center shadow-lg hover:shadow-fuchsia-400/40 transform hover:-translate-y-1">
-                             <!-- MEJORA: Icono de pantalón actualizado -->
                              <svg class="mr-2" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M8 4H16L17 10H7L8 4Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M7 10L6 20H11V10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -150,8 +147,14 @@
             </div>
         </div>
         
-        <div id="notification" class="fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2"></div>
+        <!-- MEJORA: Pie de página añadido -->
+        <footer class="w-full text-center py-4">
+            <a href="https://imdeadmizxk.github.io/Portafolio/" target="_blank" class="text-gray-500 hover:text-cyan-400 transition-colors text-sm">Made By SilentExe</a>
+        </footer>
     </div>
+    
+    <!-- MEJORA: Notificación movida fuera del contenedor flex para un posicionamiento correcto -->
+    <div id="notification" class="fixed bottom-5 right-5 text-white py-2 px-4 rounded-lg shadow-lg opacity-0 transform translate-y-2"></div>
 
     <script>
         // --- Lógica de la aplicación existente (sin cambios) ---
