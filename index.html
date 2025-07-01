@@ -1,1 +1,401 @@
-[clean]
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestro Aniversario</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751409462/chiikawa-and-hachiwares-friendship-is-so-sweet-v0-ke02d73xppre1_p8qcm6.png" type="image/jpeg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            background-color: #fff1f2; /* Color de fondo base */
+            /* Deshabilitar selección de texto para evitar arrastre */
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ */
+            user-select: none; /* Standard */
+        }
+        .font-title {
+            font-family: 'Playfair Display', serif;
+        }
+        /* --- Estilos para el corazón (corregido) --- */
+        .heart {
+            /* La posición se establece en JS */
+            pointer-events: none;
+            opacity: 0;
+            animation: floatUp 5s ease-in-out forwards;
+        }
+        @keyframes floatUp {
+            0% {
+                /* Inicia centrado y visible */
+                transform: translate(-50%, -50%) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                /* Flota hacia arriba manteniendo el centrado horizontal */
+                transform: translate(-50%, -100vh);
+                opacity: 0;
+            }
+        }
+        
+        /* --- Estilos para el efecto de tarjeta --- */
+        .moment-card .media-blur {
+            filter: blur(20px);
+            transform: scale(1.2);
+            transition: all 0.7s ease-in-out;
+        }
+        .moment-card.is-cleared .media-blur {
+            filter: blur(0);
+            transform: scale(1);
+        }
+        .moment-card .text-overlay {
+            opacity: 1;
+            background-color: rgba(0,0,0,0.3);
+            transition: opacity 0.7s ease-in-out;
+        }
+        .moment-card.is-cleared .text-overlay {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Nuevos estilos para la animación de scroll --- */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .scroll-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 to-pink-200 text-gray-800">
+
+    <!-- Canvas para la animación de partículas -->
+    <canvas id="particle-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
+
+    <!-- Contenedor principal con padding ajustado para móviles -->
+    <div id="main-container" class="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-8 sm:p-8">
+
+        <!-- Encabezado -->
+        <header class="text-center mb-12 scroll-animate">
+            <h1 class="font-title text-5xl sm:text-7xl text-rose-800 drop-shadow-lg">Feliz Mesesito Juntitos :3</h1>
+            <p class="text-xl sm:text-2xl mt-4 text-pink-700">Un mes más de nuestra hermosa historia <3 </p>
+        </header>
+
+        <!-- Contador de Meses -->
+        <section id="counter-section" class="text-center mb-16 scroll-animate">
+            <h2 class="font-title text-3xl text-rose-800 mb-4">Celebrando</h2>
+            <div class="flex items-center justify-center space-x-4">
+                <div class="bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-lg text-center">
+                    <span id="months-counter" class="font-title text-6xl text-pink-600">0</span>
+                    <p class="text-lg text-rose-700 mt-2">Meses Juntos</p>
+                </div>
+            </div>
+             <!-- Control de Música -->
+            <button id="music-toggle" class="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-md transition-all duration-300">
+                Tocar nuestra canción
+            </button>
+        </section>
+
+        <!-- Galería de Recuerdos -->
+        <section class="w-full max-w-4xl mb-16 scroll-animate">
+            <h2 class="font-title text-3xl text-center text-rose-800 mb-8">Nuestros Momentos</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                
+                <!-- Tarjeta 1 con Audio -->
+                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer">
+                    <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751405928/20250701_152612_vjf8oo.jpg" alt="Recuerdo 1" class="media-blur w-full h-full object-cover">
+                    <audio class="card-audio" src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751407007/magic_nkyzqq.mp3" loop></audio>
+                    <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nuestra primera interacción :3</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 2 con Audio -->
+                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer">
+                    <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751406006/20250701_152732_gjejt3.jpg" alt="Recuerdo 2" class="media-blur w-full h-full object-cover">
+                    <audio class="card-audio" src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751407114/cosa_dc3cmz.mp3" loop></audio>
+                    <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nuestro primer beso jiji</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3: Video Interactivo -->
+                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
+                    <video loop playsinline class="media-blur w-full h-full object-cover">
+                        <source src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751406022/VID-20231101-WA0007_uh6mln.mp4" type="video/mp4">
+                    </video>
+                    <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nosotros bb</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Mensaje Especial -->
+        <section class="w-full max-w-2xl text-center mb-12 scroll-animate">
+             <h2 class="font-title text-3xl text-rose-800 mb-4">Un Mensaje Para Ti</h2>
+             <div class="bg-white/50 backdrop-blur-sm p-8 md:p-10 rounded-2xl shadow-lg min-h-[220px]">
+                <p id="love-message" class="text-lg text-left text-pink-800"></p>
+             </div>
+        </section>
+
+        <!-- Nueva sección de cuenta regresiva -->
+        <footer class="text-center mt-6 mb-8 scroll-animate w-full max-w-2xl">
+            <h2 class="font-title text-4xl text-rose-800 mb-6">Cuenta Regresiva Para Nuestros 2 Años</h2>
+            <div id="countdown" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-white">
+                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                    <span id="days" class="font-title text-4xl">0</span>
+                    <p>Días</p>
+                </div>
+                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                    <span id="hours" class="font-title text-4xl">0</span>
+                    <p>Horas</p>
+                </div>
+                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                    <span id="minutes" class="font-title text-4xl">0</span>
+                    <p>Minutos</p>
+                </div>
+                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                    <span id="seconds" class="font-title text-4xl">0</span>
+                    <p>Segundos</p>
+                </div>
+            </div>
+            <p id="countdown-message" class="font-title text-3xl text-rose-800 mt-8 hidden">¡Felices 2 años, mi amor!</p>
+            <p class="text-2xl text-pink-700 mt-6 relative z-10">2 años juntitos bebeita !!!!!!</p>
+            <!-- Imagen añadida y hecha clickeable -->
+            <a href="https://imdeadmizxk.github.io/lover/" target="_blank" rel="noopener noreferrer" class="cursor-pointer">
+                <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751409462/chiikawa-and-hachiwares-friendship-is-so-sweet-v0-ke02d73xppre1_p8qcm6.png" alt="Imagen de Chiikawa y Hachiware" class="-mt-16 mx-auto w-auto max-w-xs sm:max-w-sm">
+            </a>
+        </footer>
+
+    </div>
+    
+    <!-- Elemento de Audio para la música de fondo -->
+    <audio id="background-music" loop>
+        <source src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751405641/%E3%81%9D%E3%82%8C%E3%81%AF%E7%B4%84%E6%9D%9F%E3%81%A0_vjrkyg.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURACIÓN ---
+            const mesesJuntos = 23; 
+            const mensajeDeAmor = "Te amo mucho mi bbita preciosa, me haces muy feliz y me alegra poder estar contigo, me haz hecho el hombre más felis del mundo bbita, me veo contigo hoy, mañana y siempre a tu lado bb, eres el amor de mi vida bbita, te amo con todo mi ser mi hermosa miau bebita ♡ :3";
+            
+            // --- ELEMENTOS DEL DOM ---
+            const counterElement = document.getElementById('months-counter');
+            const messageElement = document.getElementById('love-message');
+            const momentCards = document.querySelectorAll('.moment-card');
+            const mainContainer = document.getElementById('main-container');
+            const musicToggle = document.getElementById('music-toggle');
+            const backgroundMusic = document.getElementById('background-music');
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // --- LÓGICA ANTI-DESCARGA ---
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            document.addEventListener('dragstart', event => {
+                if (event.target.tagName.toUpperCase() === 'IMG') {
+                    event.preventDefault();
+                }
+            });
+
+            // --- LÓGICA DE PARTÍCULAS ANIMADAS ---
+            let particlesArray;
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            class Particle {
+                constructor(x, y, directionX, directionY, size, color) {
+                    this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color;
+                }
+                draw() {
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill();
+                }
+                update() {
+                    if (this.x > canvas.width || this.x < 0) { this.directionX = -this.directionX; }
+                    if (this.y > canvas.height || this.y < 0) { this.directionY = -this.directionY; }
+                    this.x += this.directionX; this.y += this.directionY; this.draw();
+                }
+            }
+
+            function initParticles() {
+                particlesArray = [];
+                let numberOfParticles = (canvas.height * canvas.width) / 9000;
+                for (let i = 0; i < numberOfParticles; i++) {
+                    let size = (Math.random() * 2) + 1;
+                    let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                    let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                    let directionX = (Math.random() * .4) - .2;
+                    let directionY = (Math.random() * .4) - .2;
+                    let color = 'rgba(255, 255, 255, 0.6)';
+                    particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+                }
+            }
+
+            function animateParticles() {
+                requestAnimationFrame(animateParticles);
+                ctx.clearRect(0,0,innerWidth, innerHeight);
+                for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); }
+            }
+            
+            window.addEventListener('resize', () => {
+                canvas.width = innerWidth; canvas.height = innerHeight; initParticles();
+            });
+
+            initParticles();
+            animateParticles();
+
+            // --- ANIMACIÓN DE SCROLL (CORREGIDA) ---
+            const animatedElements = document.querySelectorAll('.scroll-animate');
+            const scrollObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            animatedElements.forEach(el => scrollObserver.observe(el));
+
+
+            // --- ANIMACIÓN CONTADOR ---
+            let count = 0;
+            const target = mesesJuntos;
+            const totalAnimationTime = 2500;
+            const delay = totalAnimationTime / target;
+            const counterInterval = setInterval(() => {
+                count++;
+                if (count <= target) { counterElement.textContent = count; }
+                if (count >= target) { clearInterval(counterInterval); }
+            }, delay);
+
+            // --- EFECTO MÁQUINA DE ESCRIBIR ---
+            let i = 0;
+            function typeWriter() {
+                if (i < mensajeDeAmor.length) {
+                    messageElement.innerHTML += mensajeDeAmor.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 50);
+                }
+            }
+            const messageObserver = new IntersectionObserver((entries, observer) => {
+                if(entries[0].isIntersecting) {
+                    setTimeout(typeWriter, 500);
+                    observer.unobserve(entries[0].target);
+                }
+            }, { threshold: 0.5 });
+            messageObserver.observe(messageElement);
+
+            // --- LÓGICA DE MÚSICA DE FONDO ---
+            musicToggle.addEventListener('click', () => {
+                const openCard = document.querySelector('.moment-card.is-cleared');
+                if (openCard) { openCard.click(); }
+                backgroundMusic.removeAttribute('data-paused-by-media');
+                if (backgroundMusic.paused) {
+                    backgroundMusic.play();
+                    musicToggle.textContent = 'Detener canción';
+                } else {
+                    backgroundMusic.pause();
+                    musicToggle.textContent = 'Tocar nuestra canción';
+                }
+            });
+
+            // --- EFECTO DE TARJETAS DE MOMENTOS ---
+            momentCards.forEach(clickedCard => {
+                clickedCard.addEventListener('click', () => {
+                    const isOpening = !clickedCard.classList.contains('is-cleared');
+                    momentCards.forEach(otherCard => {
+                        if (otherCard.classList.contains('is-cleared')) {
+                            otherCard.classList.remove('is-cleared');
+                            const otherMedia = otherCard.querySelector('video') || otherCard.querySelector('.card-audio');
+                            if (otherMedia) { otherMedia.pause(); otherMedia.currentTime = 0; }
+                        }
+                    });
+                    if (isOpening) { clickedCard.classList.add('is-cleared'); }
+                    const specialMedia = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
+                    if (specialMedia) {
+                        if (isOpening) {
+                            if (!backgroundMusic.paused) {
+                                backgroundMusic.pause();
+                                backgroundMusic.setAttribute('data-paused-by-media', 'true');
+                            }
+                            if (clickedCard.querySelector('video')) clickedCard.querySelector('video').muted = false;
+                            specialMedia.play();
+                        } else {
+                            specialMedia.pause();
+                            specialMedia.currentTime = 0;
+                            const anyCardNowOpen = document.querySelector('.moment-card.is-cleared');
+                            if (backgroundMusic.getAttribute('data-paused-by-media') === 'true' && !anyCardNowOpen) {
+                                backgroundMusic.play();
+                                backgroundMusic.removeAttribute('data-paused-by-media');
+                            }
+                        }
+                    }
+                });
+            });
+
+            // --- ANIMACIÓN DE CORAZONES (CON IMAGEN) ---
+            function createHeart(x, y) {
+                const heartWrapper = document.createElement('div');
+                heartWrapper.classList.add('heart');
+                heartWrapper.style.position = 'fixed';
+                heartWrapper.style.left = `${x}px`;
+                heartWrapper.style.top = `${y}px`;
+                heartWrapper.style.zIndex = '9999';
+
+                const heartImage = document.createElement('img');
+                heartImage.src = 'https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751408620/Heart_coraz%C3%B3n.svg_iuip8s.png';
+                const size = Math.random() * 24 + 16;
+                heartImage.style.width = `${size}px`;
+                heartImage.style.height = 'auto';
+
+                heartWrapper.appendChild(heartImage);
+                document.body.appendChild(heartWrapper);
+
+                setTimeout(() => {
+                    heartWrapper.remove();
+                }, 5000);
+            }
+
+            document.body.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('.moment-card') || e.target.closest('a')) return;
+                createHeart(e.clientX, e.clientY);
+            });
+
+            // --- LÓGICA DE CUENTA REGRESIVA ---
+            const countdownDate = new Date("August 1, 2025 00:00:00").getTime();
+            const countdownFunction = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = countdownDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("days").innerText = days;
+                document.getElementById("hours").innerText = hours;
+                document.getElementById("minutes").innerText = minutes;
+                document.getElementById("seconds").innerText = seconds;
+
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById("countdown").style.display = "none";
+                    document.getElementById("countdown-message").classList.remove('hidden');
+                }
+            }, 1000);
+
+        });
+    </script>
+
+</body>
+</html>
