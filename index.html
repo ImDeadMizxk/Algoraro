@@ -76,11 +76,24 @@
 </head>
 <body class="bg-gradient-to-br from-rose-50 to-pink-200 text-gray-800">
 
+    <!-- Pantalla de inicio (Estructura corregida) -->
+    <div id="entry-overlay" class="fixed inset-0 bg-black/90 z-50 transition-opacity duration-1000">
+        <!-- Contenedor para centrar el texto estático -->
+        <div class="w-full h-full flex flex-col items-center justify-center text-center text-white pointer-events-none p-4">
+            <h1 id="entry-title" class="font-title text-6xl md:text-8xl text-red-500 animate-pulse">PELIGRO</h1>
+            <p id="entry-text" class="mt-8 text-xl md:text-2xl uppercase tracking-widest">NO TOQUES ESE BOTON BEBEE</p>
+        </div>
+        <!-- El botón se posiciona de forma absoluta para no afectar al texto -->
+        <button id="entry-button" class="absolute bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300" style="top: 70%; left: 50%; transform: translateX(-50%);">
+            Activar Nuestra Cancion
+        </button>
+    </div>
+
     <!-- Canvas para la animación de partículas -->
     <canvas id="particle-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
 
-    <!-- Contenedor principal con padding ajustado para móviles -->
-    <div id="main-container" class="relative min-h-screen flex flex-col items-center justify-center px-4 pt-20 pb-8 sm:p-8">
+    <!-- Contenedor principal (inicialmente oculto) -->
+    <div id="main-container" class="hidden relative min-h-screen flex-col items-center justify-center px-4 pt-20 pb-8 sm:p-8">
 
         <!-- Encabezado -->
         <header class="text-center mb-12 scroll-animate">
@@ -171,7 +184,7 @@
             <p id="countdown-message" class="font-title text-3xl text-rose-800 mt-8 hidden">¡Felices 2 años, mi amor!</p>
             <p class="text-2xl text-pink-700 mt-6 relative z-10">2 años juntitos bebeita !!!!!!</p>
             <!-- Imagen añadida y hecha clickeable -->
-            <a href="https://imdeadmizxk.github.io/lover/" target="_blank" rel="noopener noreferrer" class="cursor-pointer">
+            <a id="chiikawa-link" href="https://imdeadmizxk.github.io/lover/" target="_blank" rel="noopener noreferrer" class="cursor-pointer">
                 <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751409462/chiikawa-and-hachiwares-friendship-is-so-sweet-v0-ke02d73xppre1_p8qcm6.png" alt="Imagen de Chiikawa y Hachiware" class="-mt-16 mx-auto w-auto max-w-xs sm:max-w-sm">
             </a>
         </footer>
@@ -198,6 +211,78 @@
             const backgroundMusic = document.getElementById('background-music');
             const canvas = document.getElementById('particle-canvas');
             const ctx = canvas.getContext('2d');
+            const entryOverlay = document.getElementById('entry-overlay');
+            const entryButton = document.getElementById('entry-button');
+            const entryTitle = document.getElementById('entry-title');
+            const entryText = document.getElementById('entry-text');
+            const chiikawaLink = document.getElementById('chiikawa-link');
+
+            // --- LÓGICA DE LA PANTALLA DE INICIO INTERACTIVA ---
+            let entryClickCount = 0;
+            const entryMessages = [
+                "BEBE TE DIJEE QUE NO LO TOQUES AAAAAAAAA",
+                "YAAAA BEBE PARAAA",
+                "BUENO BB, TA BIEN TOCALOOOOO AAAAAAAAAAAAAAAAAAAAAAAAA"
+            ];
+
+            entryButton.addEventListener('click', () => {
+                entryClickCount++;
+
+                if (entryClickCount <= 3) {
+                    entryText.textContent = entryMessages[entryClickCount - 1];
+                    
+                    const moveButton = () => {
+                        const overlayRect = entryOverlay.getBoundingClientRect();
+                        const buttonRect = entryButton.getBoundingClientRect();
+                        const titleRect = entryTitle.getBoundingClientRect();
+                        const textRect = entryText.getBoundingClientRect();
+
+                        let newTop, newLeft, isSafe = false;
+                        let attempts = 0;
+
+                        while (!isSafe && attempts < 50) {
+                            newTop = Math.random() * (overlayRect.height - buttonRect.height);
+                            newLeft = Math.random() * (overlayRect.width - buttonRect.width);
+
+                            const titleCollision = (
+                                newLeft < titleRect.right &&
+                                newLeft + buttonRect.width > titleRect.left &&
+                                newTop < titleRect.bottom &&
+                                newTop + buttonRect.height > titleRect.top
+                            );
+
+                            const textCollision = (
+                                newLeft < textRect.right &&
+                                newLeft + buttonRect.width > textRect.left &&
+                                newTop < textRect.bottom &&
+                                newTop + buttonRect.height > textRect.top
+                            );
+
+                            if (!titleCollision && !textCollision) {
+                                isSafe = true;
+                            }
+                            attempts++;
+                        }
+                        
+                        entryButton.style.position = 'absolute';
+                        entryButton.style.top = `${newTop}px`;
+                        entryButton.style.left = `${newLeft}px`;
+                        entryButton.style.transform = 'none';
+                    };
+
+                    moveButton();
+
+                } else {
+                    backgroundMusic.play();
+                    musicToggle.textContent = 'Detener canción';
+                    
+                    entryOverlay.classList.add('opacity-0', 'pointer-events-none');
+                    
+                    mainContainer.classList.remove('hidden');
+                    mainContainer.classList.add('flex');
+                }
+            });
+
 
             // --- LÓGICA ANTI-DESCARGA ---
             document.addEventListener('contextmenu', event => event.preventDefault());
@@ -304,6 +389,14 @@
                     backgroundMusic.play();
                     musicToggle.textContent = 'Detener canción';
                 } else {
+                    backgroundMusic.pause();
+                    musicToggle.textContent = 'Tocar nuestra canción';
+                }
+            });
+
+            // --- LÓGICA PARA PAUSAR MÚSICA CON EL ENLACE DE CHIIKAWA ---
+            chiikawaLink.addEventListener('click', () => {
+                if (!backgroundMusic.paused) {
                     backgroundMusic.pause();
                     musicToggle.textContent = 'Tocar nuestra canción';
                 }
