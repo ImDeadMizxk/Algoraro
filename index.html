@@ -51,17 +51,23 @@
                 opacity: 0;
             }
         }
+        .moment-card {
+             transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
         .moment-card .media-blur {
-            /* Se reduce el blur para mejorar el rendimiento en móviles */
             filter: blur(10px); 
             transform: scale(1.1);
             transition: all 0.7s ease-in-out;
-            /* Le decimos al navegador que se prepare para animar estas propiedades */
             will-change: filter, transform;
         }
         .moment-card.is-cleared .media-blur {
             filter: blur(0);
             transform: scale(1);
+        }
+        /* Animación al hacer clic en la tarjeta */
+        .moment-card.is-cleared {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
         }
         .moment-card .text-overlay {
             opacity: 1;
@@ -290,7 +296,6 @@
 
             function initParticles() {
                 particlesArray = [];
-                // Se reduce drásticamente la cantidad de partículas en pantallas pequeñas
                 let particleDensity = window.innerWidth < 768 ? 25000 : 9000;
                 let numberOfParticles = (canvas.height * canvas.width) / particleDensity;
 
@@ -382,44 +387,53 @@
                 }
             });
 
-            // --- EFECTO DE TARJETAS DE MOMENTOS ---
+            // --- EFECTO DE TARJETAS DE MOMENTOS (CON CARGA DIFERIDA DE VIDEO) ---
             momentCards.forEach(clickedCard => {
                 clickedCard.addEventListener('click', () => {
-                    const isOpening = !clickedCard.classList.contains('is-cleared');
+                    const isAlreadyCleared = clickedCard.classList.contains('is-cleared');
+
+                    // Reset all OTHER cards
                     momentCards.forEach(otherCard => {
-                        if (otherCard.classList.contains('is-cleared')) {
+                        if (otherCard !== clickedCard) {
                             otherCard.classList.remove('is-cleared');
                             const otherMedia = otherCard.querySelector('video') || otherCard.querySelector('.card-audio');
-                            if (otherMedia) { otherMedia.pause(); otherMedia.currentTime = 0; }
+                            if (otherMedia) {
+                                otherMedia.pause();
+                                otherMedia.currentTime = 0;
+                            }
                         }
                     });
-                    if (isOpening) { clickedCard.classList.add('is-cleared'); }
-                    
-                    const specialMedia = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
-                    
-                    if (specialMedia) {
-                        // Carga diferida para el video
-                        if (specialMedia.tagName === 'VIDEO' && specialMedia.dataset.src) {
-                            specialMedia.src = specialMedia.dataset.src;
-                            specialMedia.removeAttribute('data-src');
-                            specialMedia.load();
-                        }
 
-                        if (isOpening) {
+                    // Toggle the clicked card
+                    if (isAlreadyCleared) {
+                        // It was open, now close it
+                        clickedCard.classList.remove('is-cleared');
+                        const media = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
+                        if (media) {
+                            media.pause();
+                            media.currentTime = 0;
+                        }
+                        if (backgroundMusic.getAttribute('data-paused-by-media') === 'true') {
+                            backgroundMusic.play();
+                            backgroundMusic.removeAttribute('data-paused-by-media');
+                        }
+                    } else {
+                        // It was closed, now open it
+                        clickedCard.classList.add('is-cleared');
+                        const media = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
+                        if (media) {
+                            // Lazy load video source if needed
+                            if (media.tagName === 'VIDEO' && media.dataset.src && !media.src) {
+                                media.src = media.dataset.src;
+                                media.load();
+                            }
+                            
                             if (!backgroundMusic.paused) {
                                 backgroundMusic.pause();
                                 backgroundMusic.setAttribute('data-paused-by-media', 'true');
                             }
-                            if (clickedCard.querySelector('video')) clickedCard.querySelector('video').muted = false;
-                            specialMedia.play();
-                        } else {
-                            specialMedia.pause();
-                            specialMedia.currentTime = 0;
-                            const anyCardNowOpen = document.querySelector('.moment-card.is-cleared');
-                            if (backgroundMusic.getAttribute('data-paused-by-media') === 'true' && !anyCardNowOpen) {
-                                backgroundMusic.play();
-                                backgroundMusic.removeAttribute('data-paused-by-media');
-                            }
+                            if (media.tagName === 'VIDEO') media.muted = false;
+                            media.play();
                         }
                     }
                 });
