@@ -137,11 +137,9 @@
                     </div>
                 </div>
 
-                <!-- Tarjeta 2 (Video) -->
+                <!-- Tarjeta 2 (Video con carga diferida) -->
                 <div class="moment-card h-72 md:h-80 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
-                    <video loop playsinline class="media-blur w-full h-full object-cover">
-                        <source src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020874/1111_u3tk0y.mp4" type="video/mp4">
-                    </video>
+                    <video loop playsinline muted class="media-blur w-full h-full object-cover" data-src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020874/1111_u3tk0y.mp4"></video>
                     <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
                         <span class="font-title text-2xl text-white text-center drop-shadow-md">No olvidar bebita :3</span>
                     </div>
@@ -210,7 +208,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // --- CONFIGURACIÓN ---
             const mesesJuntos = 24; 
-            const mensajeDeAmor = "Mi bebita, hoy cumplimos 2 años de esta hermosa relación. Eres todo lo que siempre había querido para mí, me haces tan feliz y haces que mis días sean mucho más interesantes. Tu presencia es todo para mí, me gustas demasiado y no me veo sin ti en un futuro. Quiero que estemos juntitos para siempre y que jamás se acabe esta relación. Espero que podamos vivir y tener un futuro juntos bb, Quiero que lo nuestro sea eterno y que jamas acabe, te amo tanto mi niña bella. Eres el amor de mi vida y así será toda mi vida, por siempre y para siempre, mua <3";
+            const mensajeDeAmor = "Mi bebita, hoy cumplimos 2 años de esta hermosa relación. Eres todo lo que siempre había querido para mí; me haces tan feliz y llenas mis días de alegría. Tu presencia es todo para mí. Me gustas demasiado y no me veo sin ti en un futuro. Quiero que estemos juntitos para siempre, que lo nuestro sea eterno y que jamás se acabe. Espero que podamos vivir y tener un futuro juntos, bb. Te amo tanto, mi niña bella. Eres el amor de mi vida y así será por siempre y para siempre, mua <3";
             
             // --- ELEMENTOS DEL DOM ---
             const counterElement = document.getElementById('months-counter');
@@ -396,8 +394,17 @@
                         }
                     });
                     if (isOpening) { clickedCard.classList.add('is-cleared'); }
+                    
                     const specialMedia = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
+                    
                     if (specialMedia) {
+                        // Carga diferida para el video
+                        if (specialMedia.tagName === 'VIDEO' && specialMedia.dataset.src) {
+                            specialMedia.src = specialMedia.dataset.src;
+                            specialMedia.removeAttribute('data-src');
+                            specialMedia.load();
+                        }
+
                         if (isOpening) {
                             if (!backgroundMusic.paused) {
                                 backgroundMusic.pause();
