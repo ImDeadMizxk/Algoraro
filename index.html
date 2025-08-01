@@ -51,23 +51,14 @@
                 opacity: 0;
             }
         }
-        .moment-card {
-             transition: transform 0.4s ease, box-shadow 0.4s ease;
-        }
         .moment-card .media-blur {
-            filter: blur(10px); 
-            transform: scale(1.1);
+            filter: blur(20px);
+            transform: scale(1.2);
             transition: all 0.7s ease-in-out;
-            will-change: filter, transform;
         }
         .moment-card.is-cleared .media-blur {
             filter: blur(0);
             transform: scale(1);
-        }
-        /* Animación al hacer clic en la tarjeta */
-        .moment-card.is-cleared {
-            transform: scale(1.05);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
         }
         .moment-card .text-overlay {
             opacity: 1;
@@ -93,7 +84,7 @@
 
     <!-- Pantalla de inicio -->
     <div id="entry-overlay" class="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-center transition-opacity duration-1000">
-        <div class="text-white p-4 bg-black/40 rounded-xl">
+        <div class="text-white p-4 bg-black/20 rounded-xl">
             <h1 id="entry-title" class="font-title text-6xl md:text-8xl text-white drop-shadow-lg">ES HOY 2 AÑOS BEBITA!!!!!</h1>
             <p id="entry-text" class="mt-8 text-xl md:text-2xl uppercase tracking-widest">¡Haz clic para celebrar!</p>
         </div>
@@ -143,9 +134,11 @@
                     </div>
                 </div>
 
-                <!-- Tarjeta 2 (Video con carga diferida) -->
+                <!-- Tarjeta 2 (Video) -->
                 <div class="moment-card h-72 md:h-80 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
-                    <video loop playsinline muted class="media-blur w-full h-full object-cover" data-src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020874/1111_u3tk0y.mp4"></video>
+                    <video loop playsinline class="media-blur w-full h-full object-cover">
+                        <source src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020874/1111_u3tk0y.mp4" type="video/mp4">
+                    </video>
                     <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
                         <span class="font-title text-2xl text-white text-center drop-shadow-md">No olvidar bebita :3</span>
                     </div>
@@ -214,7 +207,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             // --- CONFIGURACIÓN ---
             const mesesJuntos = 24; 
-            const mensajeDeAmor = "Mi bebita, hoy cumplimos 2 años de esta hermosa relación. Eres todo lo que siempre había querido para mí; me haces tan feliz y llenas mis días de alegría. Tu presencia es todo para mí. Me gustas demasiado y no me veo sin ti en un futuro. Quiero que estemos juntitos para siempre, que lo nuestro sea eterno y que jamás se acabe. Espero que podamos vivir y tener un futuro juntos, bb. Te amo tanto, mi niña bella. Eres el amor de mi vida y así será por siempre y para siempre, mua <3";
+            const mensajeDeAmor = "Mi bebita, hoy cumplimos 2 años de esta hermosa relación. Eres todo lo que siempre había querido para mí, me haces tan feliz y haces que mis días sean mucho más interesantes. Tu presencia es todo para mí, me gustas demasiado y no me veo sin ti en un futuro. Quiero que estemos juntitos para siempre y que jamás se acabe esta relación. Espero que podamos vivir y tener un futuro juntos bb, Quiero que lo nuestro sea eterno y que jamas acabe, te amo tanto mi niña bella. Eres el amor de mi vida y así será toda mi vida, por siempre y para siempre, mua <3";
             
             // --- ELEMENTOS DEL DOM ---
             const counterElement = document.getElementById('months-counter');
@@ -275,7 +268,7 @@
                 createHeart(e.clientX, e.clientY);
             });
 
-            // --- LÓGICA DE PARTÍCULAS ANIMADAS (OPTIMIZADA) ---
+            // --- LÓGICA DE PARTÍCULAS ANIMADAS ---
             let particlesArray;
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
@@ -296,9 +289,7 @@
 
             function initParticles() {
                 particlesArray = [];
-                let particleDensity = window.innerWidth < 768 ? 25000 : 9000;
-                let numberOfParticles = (canvas.height * canvas.width) / particleDensity;
-
+                let numberOfParticles = (canvas.height * canvas.width) / 9000;
                 for (let i = 0; i < numberOfParticles; i++) {
                     let size = (Math.random() * 2) + 1;
                     let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
@@ -387,53 +378,35 @@
                 }
             });
 
-            // --- EFECTO DE TARJETAS DE MOMENTOS (CON CARGA DIFERIDA DE VIDEO) ---
+            // --- EFECTO DE TARJETAS DE MOMENTOS ---
             momentCards.forEach(clickedCard => {
                 clickedCard.addEventListener('click', () => {
-                    const isAlreadyCleared = clickedCard.classList.contains('is-cleared');
-
-                    // Reset all OTHER cards
+                    const isOpening = !clickedCard.classList.contains('is-cleared');
                     momentCards.forEach(otherCard => {
-                        if (otherCard !== clickedCard) {
+                        if (otherCard.classList.contains('is-cleared')) {
                             otherCard.classList.remove('is-cleared');
                             const otherMedia = otherCard.querySelector('video') || otherCard.querySelector('.card-audio');
-                            if (otherMedia) {
-                                otherMedia.pause();
-                                otherMedia.currentTime = 0;
-                            }
+                            if (otherMedia) { otherMedia.pause(); otherMedia.currentTime = 0; }
                         }
                     });
-
-                    // Toggle the clicked card
-                    if (isAlreadyCleared) {
-                        // It was open, now close it
-                        clickedCard.classList.remove('is-cleared');
-                        const media = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
-                        if (media) {
-                            media.pause();
-                            media.currentTime = 0;
-                        }
-                        if (backgroundMusic.getAttribute('data-paused-by-media') === 'true') {
-                            backgroundMusic.play();
-                            backgroundMusic.removeAttribute('data-paused-by-media');
-                        }
-                    } else {
-                        // It was closed, now open it
-                        clickedCard.classList.add('is-cleared');
-                        const media = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
-                        if (media) {
-                            // Lazy load video source if needed
-                            if (media.tagName === 'VIDEO' && media.dataset.src && !media.src) {
-                                media.src = media.dataset.src;
-                                media.load();
-                            }
-                            
+                    if (isOpening) { clickedCard.classList.add('is-cleared'); }
+                    const specialMedia = clickedCard.querySelector('video') || clickedCard.querySelector('.card-audio');
+                    if (specialMedia) {
+                        if (isOpening) {
                             if (!backgroundMusic.paused) {
                                 backgroundMusic.pause();
                                 backgroundMusic.setAttribute('data-paused-by-media', 'true');
                             }
-                            if (media.tagName === 'VIDEO') media.muted = false;
-                            media.play();
+                            if (clickedCard.querySelector('video')) clickedCard.querySelector('video').muted = false;
+                            specialMedia.play();
+                        } else {
+                            specialMedia.pause();
+                            specialMedia.currentTime = 0;
+                            const anyCardNowOpen = document.querySelector('.moment-card.is-cleared');
+                            if (backgroundMusic.getAttribute('data-paused-by-media') === 'true' && !anyCardNowOpen) {
+                                backgroundMusic.play();
+                                backgroundMusic.removeAttribute('data-paused-by-media');
+                            }
                         }
                     }
                 });
