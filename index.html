@@ -12,37 +12,45 @@
     <style>
         body {
             font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
-            background-color: #fff1f2; /* Color de fondo base */
-            /* Deshabilitar selección de texto para evitar arrastre */
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10+ */
-            user-select: none; /* Standard */
+            overflow: hidden; /* Evita el scroll en el body */
+            background-color: #fff1f2;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* El contenedor principal ahora es el que se desplaza */
+        #main-container {
+            height: 100vh;
+            overflow-y: auto; /* Permite el scroll solo en este contenedor */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        #main-container::-webkit-scrollbar {
+            display: none; /* Chrome, Safari */
         }
         .font-title {
             font-family: 'Playfair Display', serif;
         }
-        /* --- Estilos para el corazón (corregido) --- */
+        #entry-overlay {
+            background-image: url('https://res.cloudinary.com/drwdtuzxy/image/upload/v1754019975/image_1_viuakf.png');
+            background-size: cover;
+            background-position: center;
+        }
         .heart {
-            /* La posición se establece en JS */
             pointer-events: none;
             opacity: 0;
             animation: floatUp 5s ease-in-out forwards;
         }
         @keyframes floatUp {
             0% {
-                /* Inicia centrado y visible */
                 transform: translate(-50%, -50%) translateY(0);
                 opacity: 1;
             }
             100% {
-                /* Flota hacia arriba manteniendo el centrado horizontal */
                 transform: translate(-50%, -100vh);
                 opacity: 0;
             }
         }
-        
-        /* --- Estilos para el efecto de tarjeta --- */
         .moment-card .media-blur {
             filter: blur(20px);
             transform: scale(1.2);
@@ -61,8 +69,6 @@
             opacity: 0;
             pointer-events: none;
         }
-
-        /* --- Nuevos estilos para la animación de scroll --- */
         .scroll-animate {
             opacity: 0;
             transform: translateY(50px);
@@ -74,18 +80,16 @@
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-rose-50 to-pink-200 text-gray-800">
+<body class="bg-gradient-to-br from-amber-100 to-rose-300 text-gray-800">
 
-    <!-- Pantalla de inicio (Estructura corregida) -->
-    <div id="entry-overlay" class="fixed inset-0 bg-black/90 z-50 transition-opacity duration-1000">
-        <!-- Contenedor para centrar el texto estático -->
-        <div class="w-full h-full flex flex-col items-center justify-center text-center text-white pointer-events-none p-4">
-            <h1 id="entry-title" class="font-title text-6xl md:text-8xl text-red-500 animate-pulse">PELIGRO</h1>
-            <p id="entry-text" class="mt-8 text-xl md:text-2xl uppercase tracking-widest">NO TOQUES ESE BOTON BEBEE</p>
+    <!-- Pantalla de inicio -->
+    <div id="entry-overlay" class="fixed inset-0 bg-black/50 z-50 flex flex-col items-center justify-center text-center transition-opacity duration-1000">
+        <div class="text-white p-4 bg-black/20 rounded-xl">
+            <h1 id="entry-title" class="font-title text-6xl md:text-8xl text-white drop-shadow-lg">ES HOY ES HOY, 2 AÑOS BEBITA!!!!!</h1>
+            <p id="entry-text" class="mt-8 text-xl md:text-2xl uppercase tracking-widest">¡Haz clic para celebrar!</p>
         </div>
-        <!-- El botón se posiciona de forma absoluta para no afectar al texto -->
-        <button id="entry-button" class="absolute bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300" style="top: 70%; left: 50%; transform: translateX(-50%);">
-            Activar Nuestra Cancion
+        <button id="entry-button" class="mt-8 bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all duration-300">
+            Celebrar
         </button>
     </div>
 
@@ -93,59 +97,59 @@
     <canvas id="particle-canvas" class="fixed top-0 left-0 w-full h-full -z-10"></canvas>
 
     <!-- Contenedor principal (inicialmente oculto) -->
-    <div id="main-container" class="hidden relative min-h-screen flex-col items-center justify-center px-4 pt-20 pb-8 sm:p-8">
+    <div id="main-container" class="hidden relative flex-col items-center px-4 pt-20 pb-8 sm:p-8">
 
         <!-- Encabezado -->
         <header class="text-center mb-12 scroll-animate">
-            <h1 class="font-title text-5xl sm:text-7xl text-rose-800 drop-shadow-lg">Feliz Mesesito Juntitos :3</h1>
-            <p class="text-xl sm:text-2xl mt-4 text-pink-700">Un mes más de nuestra hermosa historia <3 </p>
+            <h1 class="font-title text-5xl sm:text-7xl text-red-800 drop-shadow-lg">FELIZ 2 AÑOS JUNTITOS :3</h1>
+            <p class="text-xl sm:text-2xl mt-4 text-rose-700">dos años juntos mi bebita te amooo</p>
         </header>
 
         <!-- Contador de Meses -->
         <section id="counter-section" class="text-center mb-16 scroll-animate">
-            <h2 class="font-title text-3xl text-rose-800 mb-4">Celebrando</h2>
+            <h2 class="font-title text-3xl text-red-800 mb-4">Celebrando</h2>
             <div class="flex items-center justify-center space-x-4">
                 <div class="bg-white/50 backdrop-blur-sm p-6 rounded-2xl shadow-lg text-center">
-                    <span id="months-counter" class="font-title text-6xl text-pink-600">0</span>
-                    <p class="text-lg text-rose-700 mt-2">Meses Juntos</p>
+                    <span id="months-counter" class="font-title text-6xl text-rose-600">0</span>
+                    <p class="text-lg text-red-700 mt-2">Meses Juntos</p>
                 </div>
             </div>
              <!-- Control de Música -->
-            <button id="music-toggle" class="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-full shadow-md transition-all duration-300">
+            <button id="music-toggle" class="mt-8 bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 px-4 rounded-full shadow-md transition-all duration-300">
                 Tocar nuestra canción
             </button>
         </section>
 
         <!-- Galería de Recuerdos -->
         <section class="w-full max-w-4xl mb-16 scroll-animate">
-            <h2 class="font-title text-3xl text-center text-rose-800 mb-8">Nuestros Momentos</h2>
+            <h2 class="font-title text-3xl text-center text-red-800 mb-8">Nuestros Momentos</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 
-                <!-- Tarjeta 1 con Audio -->
-                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer">
-                    <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751405928/20250701_152612_vjf8oo.jpg" alt="Recuerdo 1" class="media-blur w-full h-full object-cover">
-                    <audio class="card-audio" src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751407007/magic_nkyzqq.mp3" loop></audio>
+                <!-- Tarjeta 1 -->
+                <div class="moment-card h-72 md:h-80 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer">
+                    <img src="https://res.cloudinary.com/drwdtuzxy/image/upload/v1754022492/RobloxScreenShot20230910_031550686_dt9a4i.png" alt="Recuerdo 1" class="media-blur w-full h-full object-cover">
+                    <audio class="card-audio" src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754022450/Dearveni_-_Rebecca_u0pmo3.mp3" loop></audio>
                     <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
-                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nuestra primera interacción :3</span>
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">Nuestro mejor cosplay bb</span>
                     </div>
                 </div>
 
-                <!-- Tarjeta 2 con Audio -->
-                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer">
-                    <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751406006/20250701_152732_gjejt3.jpg" alt="Recuerdo 2" class="media-blur w-full h-full object-cover">
-                    <audio class="card-audio" src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751407114/cosa_dc3cmz.mp3" loop></audio>
-                    <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
-                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nuestro primer beso jiji</span>
-                    </div>
-                </div>
-
-                <!-- Tarjeta 3: Video Interactivo -->
-                <div class="moment-card h-64 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
+                <!-- Tarjeta 2 (Video) -->
+                <div class="moment-card h-72 md:h-80 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
                     <video loop playsinline class="media-blur w-full h-full object-cover">
-                        <source src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751406022/VID-20231101-WA0007_uh6mln.mp4" type="video/mp4">
+                        <source src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020874/1111_u3tk0y.mp4" type="video/mp4">
                     </video>
                     <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
-                        <span class="font-title text-2xl text-white text-center drop-shadow-md">nosotros bb</span>
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">No olvidar bebita :3</span>
+                    </div>
+                </div>
+
+                <!-- Tarjeta 3 (con Audio) -->
+                <div class="moment-card h-72 md:h-80 rounded-2xl shadow-lg overflow-hidden relative cursor-pointer bg-black">
+                    <img src="https://res.cloudinary.com/drwdtuzxy/image/upload/v1754020026/RobloxScreenShot20230725_033343932_zloffn.png" alt="Recuerdo 3" class="media-blur w-full h-full object-cover">
+                    <audio class="card-audio" src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754022155/JAKOB_-_ALL_YOUR_LOVE_hp08yf.mp3" loop></audio>
+                    <div class="text-overlay absolute inset-0 flex items-center justify-center p-4">
+                        <span class="font-title text-2xl text-white text-center drop-shadow-md">Mi niña bella y yo</span>
                     </div>
                 </div>
 
@@ -154,36 +158,39 @@
 
         <!-- Mensaje Especial -->
         <section class="w-full max-w-2xl text-center mb-12 scroll-animate">
-             <h2 class="font-title text-3xl text-rose-800 mb-4">Un Mensaje Para Ti</h2>
+             <h2 class="font-title text-3xl text-red-800 mb-4">Un Mensaje Para Ti</h2>
              <div class="bg-white/50 backdrop-blur-sm p-8 md:p-10 rounded-2xl shadow-lg min-h-[220px]">
-                <p id="love-message" class="text-lg text-left text-pink-800"></p>
+                 <p id="love-message" class="text-lg text-left text-rose-800"></p>
              </div>
         </section>
 
-        <!-- Nueva sección de cuenta regresiva -->
-        <footer class="text-center mt-6 mb-8 scroll-animate w-full max-w-2xl">
-            <h2 class="font-title text-4xl text-rose-800 mb-6">Cuenta Regresiva Para Nuestros 2 Años</h2>
+        <!-- Cuenta Regresiva para el Próximo Mes -->
+        <section id="countdown-section" class="text-center mt-6 mb-8 scroll-animate w-full max-w-2xl">
+            <h2 class="font-title text-4xl text-red-800 mb-6">Para nuestro próximo mes juntos</h2>
             <div id="countdown" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-white">
-                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                <div class="bg-rose-400/80 p-4 rounded-xl shadow-lg">
                     <span id="days" class="font-title text-4xl">0</span>
                     <p>Días</p>
                 </div>
-                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                <div class="bg-rose-400/80 p-4 rounded-xl shadow-lg">
                     <span id="hours" class="font-title text-4xl">0</span>
                     <p>Horas</p>
                 </div>
-                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                <div class="bg-rose-400/80 p-4 rounded-xl shadow-lg">
                     <span id="minutes" class="font-title text-4xl">0</span>
                     <p>Minutos</p>
                 </div>
-                <div class="bg-pink-400/80 p-4 rounded-xl shadow-lg">
+                <div class="bg-rose-400/80 p-4 rounded-xl shadow-lg">
                     <span id="seconds" class="font-title text-4xl">0</span>
                     <p>Segundos</p>
                 </div>
             </div>
-            <p id="countdown-message" class="font-title text-3xl text-rose-800 mt-8 hidden">¡Felices 2 años, mi amor!</p>
-            <p class="text-2xl text-pink-700 mt-6 relative z-10">2 años juntitos bebeita !!!!!!</p>
-            <!-- Imagen añadida y hecha clickeable -->
+            <p id="countdown-message" class="font-title text-3xl text-red-800 mt-8 hidden">¡Feliz mes, mi amor!</p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-6 mb-8 scroll-animate w-full max-w-2xl">
+            <p class="text-2xl text-rose-700 mt-6 relative z-10">Por siempre y para siempre, mi amor</p>
             <a id="chiikawa-link" href="https://imdeadmizxk.github.io/lover/" target="_blank" rel="noopener noreferrer" class="cursor-pointer">
                 <img src="https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751409462/chiikawa-and-hachiwares-friendship-is-so-sweet-v0-ke02d73xppre1_p8qcm6.png" alt="Imagen de Chiikawa y Hachiware" class="-mt-16 mx-auto w-auto max-w-xs sm:max-w-sm">
             </a>
@@ -193,14 +200,14 @@
     
     <!-- Elemento de Audio para la música de fondo -->
     <audio id="background-music" loop>
-        <source src="https://res.cloudinary.com/ddpx3ebw2/video/upload/v1751405641/%E3%81%9D%E3%82%8C%E3%81%AF%E7%B4%84%E6%9D%9F%E3%81%A0_vjrkyg.mp3" type="audio/mpeg">
+        <source src="https://res.cloudinary.com/drwdtuzxy/video/upload/v1754020643/Mareux_-_Heaven_On_Earth_Sub_espa%C3%B1ol_Lyrics_scyyz2.mp3" type="audio/mpeg">
     </audio>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- CONFIGURACIÓN ---
-            const mesesJuntos = 23; 
-            const mensajeDeAmor = "Te amo mucho mi bbita preciosa, me haces muy feliz y me alegra poder estar contigo, me haz hecho el hombre más felis del mundo bbita, me veo contigo hoy, mañana y siempre a tu lado bb, eres el amor de mi vida bbita, te amo con todo mi ser mi hermosa miau bebita ♡ :3";
+            const mesesJuntos = 24; 
+            const mensajeDeAmor = "Mi bebita, hoy cumplimos 2 años de esta hermosa relación. Eres todo lo que siempre había querido para mí, me haces tan feliz y haces que mis días sean mucho más interesantes. Tu presencia es todo para mí, me gustas demasiado y no me veo sin ti en un futuro. Quiero que estemos juntitos para siempre y que jamás se acabe esta relación. Espero que podamos vivir y tener un futuro juntos bb, Quiero que lo nuestro sea eterno y que jamas acabe, te amo tanto mi niña bella. Eres el amor de mi vida y así será toda mi vida, por siempre y para siempre, mua <3";
             
             // --- ELEMENTOS DEL DOM ---
             const counterElement = document.getElementById('months-counter');
@@ -213,76 +220,17 @@
             const ctx = canvas.getContext('2d');
             const entryOverlay = document.getElementById('entry-overlay');
             const entryButton = document.getElementById('entry-button');
-            const entryTitle = document.getElementById('entry-title');
-            const entryText = document.getElementById('entry-text');
             const chiikawaLink = document.getElementById('chiikawa-link');
 
-            // --- LÓGICA DE LA PANTALLA DE INICIO INTERACTIVA ---
-            let entryClickCount = 0;
-            const entryMessages = [
-                "BEBE TE DIJEE QUE NO LO TOQUES AAAAAAAAA",
-                "YAAAA BEBE PARAAA",
-                "BUENO BB, TA BIEN TOCALOOOOO AAAAAAAAAAAAAAAAAAAAAAAAA"
-            ];
-
+            // --- LÓGICA DE LA PANTALLA DE INICIO ---
             entryButton.addEventListener('click', () => {
-                entryClickCount++;
-
-                if (entryClickCount <= 3) {
-                    entryText.textContent = entryMessages[entryClickCount - 1];
-                    
-                    const moveButton = () => {
-                        const overlayRect = entryOverlay.getBoundingClientRect();
-                        const buttonRect = entryButton.getBoundingClientRect();
-                        const titleRect = entryTitle.getBoundingClientRect();
-                        const textRect = entryText.getBoundingClientRect();
-
-                        let newTop, newLeft, isSafe = false;
-                        let attempts = 0;
-
-                        while (!isSafe && attempts < 50) {
-                            newTop = Math.random() * (overlayRect.height - buttonRect.height);
-                            newLeft = Math.random() * (overlayRect.width - buttonRect.width);
-
-                            const titleCollision = (
-                                newLeft < titleRect.right &&
-                                newLeft + buttonRect.width > titleRect.left &&
-                                newTop < titleRect.bottom &&
-                                newTop + buttonRect.height > titleRect.top
-                            );
-
-                            const textCollision = (
-                                newLeft < textRect.right &&
-                                newLeft + buttonRect.width > textRect.left &&
-                                newTop < textRect.bottom &&
-                                newTop + buttonRect.height > textRect.top
-                            );
-
-                            if (!titleCollision && !textCollision) {
-                                isSafe = true;
-                            }
-                            attempts++;
-                        }
-                        
-                        entryButton.style.position = 'absolute';
-                        entryButton.style.top = `${newTop}px`;
-                        entryButton.style.left = `${newLeft}px`;
-                        entryButton.style.transform = 'none';
-                    };
-
-                    moveButton();
-
-                } else {
-                    backgroundMusic.play();
-                    musicToggle.textContent = 'Detener canción';
-                    
-                    entryOverlay.classList.add('opacity-0', 'pointer-events-none');
-                    
-                    mainContainer.classList.remove('hidden');
-                    mainContainer.classList.add('flex');
-                }
+                backgroundMusic.play().catch(e => console.error("La reproducción de audio fue bloqueada por el navegador:", e));
+                musicToggle.textContent = 'Detener canción';
+                
+                entryOverlay.classList.add('opacity-0', 'pointer-events-none');
+                mainContainer.classList.remove('hidden');
+                mainContainer.classList.add('flex');
             });
-
 
             // --- LÓGICA ANTI-DESCARGA ---
             document.addEventListener('contextmenu', event => event.preventDefault());
@@ -290,6 +238,34 @@
                 if (event.target.tagName.toUpperCase() === 'IMG') {
                     event.preventDefault();
                 }
+            });
+
+            // --- ANIMACIÓN DE CORAZONES ---
+            function createHeart(x, y) {
+                const heartWrapper = document.createElement('div');
+                heartWrapper.classList.add('heart');
+                heartWrapper.style.position = 'fixed';
+                heartWrapper.style.left = `${x}px`;
+                heartWrapper.style.top = `${y}px`;
+                heartWrapper.style.zIndex = '9999';
+
+                const heartImage = document.createElement('img');
+                heartImage.src = 'https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751408620/Heart_coraz%C3%B3n.svg_iuip8s.png';
+                const size = Math.random() * 24 + 16;
+                heartImage.style.width = `${size}px`;
+                heartImage.style.height = 'auto';
+
+                heartWrapper.appendChild(heartImage);
+                document.body.appendChild(heartWrapper);
+
+                setTimeout(() => {
+                    heartWrapper.remove();
+                }, 5000);
+            }
+
+            document.body.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('.moment-card') || e.target.closest('a')) return;
+                createHeart(e.clientX, e.clientY);
             });
 
             // --- LÓGICA DE PARTÍCULAS ANIMADAS ---
@@ -338,7 +314,7 @@
             initParticles();
             animateParticles();
 
-            // --- ANIMACIÓN DE SCROLL (CORREGIDA) ---
+            // --- ANIMACIÓN DE SCROLL ---
             const animatedElements = document.querySelectorAll('.scroll-animate');
             const scrollObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -435,40 +411,22 @@
                     }
                 });
             });
-
-            // --- ANIMACIÓN DE CORAZONES (CON IMAGEN) ---
-            function createHeart(x, y) {
-                const heartWrapper = document.createElement('div');
-                heartWrapper.classList.add('heart');
-                heartWrapper.style.position = 'fixed';
-                heartWrapper.style.left = `${x}px`;
-                heartWrapper.style.top = `${y}px`;
-                heartWrapper.style.zIndex = '9999';
-
-                const heartImage = document.createElement('img');
-                heartImage.src = 'https://res.cloudinary.com/ddpx3ebw2/image/upload/v1751408620/Heart_coraz%C3%B3n.svg_iuip8s.png';
-                const size = Math.random() * 24 + 16;
-                heartImage.style.width = `${size}px`;
-                heartImage.style.height = 'auto';
-
-                heartWrapper.appendChild(heartImage);
-                document.body.appendChild(heartWrapper);
-
-                setTimeout(() => {
-                    heartWrapper.remove();
-                }, 5000);
-            }
-
-            document.body.addEventListener('click', (e) => {
-                if (e.target.closest('button') || e.target.closest('.moment-card') || e.target.closest('a')) return;
-                createHeart(e.clientX, e.clientY);
-            });
-
+            
             // --- LÓGICA DE CUENTA REGRESIVA ---
-            const countdownDate = new Date("August 1, 2025 00:00:00").getTime();
+            const countdownDate = new Date("September 1, 2025 00:00:00").getTime();
             const countdownFunction = setInterval(() => {
                 const now = new Date().getTime();
                 const distance = countdownDate - now;
+
+                if (distance < 0) {
+                    clearInterval(countdownFunction);
+                    document.getElementById("countdown").style.display = "none";
+                    const countdownMessage = document.getElementById("countdown-message");
+                    if(countdownMessage) countdownMessage.classList.remove('hidden');
+                    const countdownTitle = document.querySelector("#countdown-section h2");
+                    if(countdownTitle) countdownTitle.textContent = "¡Feliz mes nuevo!";
+                    return;
+                }
 
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -479,12 +437,6 @@
                 document.getElementById("hours").innerText = hours;
                 document.getElementById("minutes").innerText = minutes;
                 document.getElementById("seconds").innerText = seconds;
-
-                if (distance < 0) {
-                    clearInterval(countdownFunction);
-                    document.getElementById("countdown").style.display = "none";
-                    document.getElementById("countdown-message").classList.remove('hidden');
-                }
             }, 1000);
 
         });
